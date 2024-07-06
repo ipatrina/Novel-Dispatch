@@ -19,21 +19,25 @@ Novel Dispatch (NDSP) 是一款适用于 Windows 操作系统下快速创建HTTP
 
 - UI text, background and color scheme customization.
 
-- API development interface
+- API development interface.
+
+- English language support.
 
 ---
 
-- 将多个本地目录映射为网页共享文件夹
+- 将多个本地目录映射为网页共享文件夹。
 
-- 多用户组权限控制访问
+- 多用户组权限控制访问。
 
-- 带有令牌的文件HTTP共享直链（支持上传和下载直链）
+- 带有令牌的文件HTTP共享直链（支持上传和下载直链）。
 
-- HTML5网页多线程分块上传支持
+- HTML5网页多线程分块上传支持。
 
-- 自定义界面文本、背景及配色方案
+- 自定义界面文本、背景及配色方案。
 
-- API开发接口
+- API开发接口。
+
+- 简体中文语言支持。
 
 
 # Operate environment / 运行环境
