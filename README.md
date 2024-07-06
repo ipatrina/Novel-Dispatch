@@ -1,8 +1,8 @@
 # Novel Dispatch
 
-Novel Dispatch is an innovative web application for fast creation of a HTTP file delivery and sharing system on Windows operating systems.
+Novel Dispatch (NDSP) is an innovative web application for fast creation of a HTTP file delivery and sharing system on Windows operating systems.
 
-Novel Dispatch 是一款适用于 Windows 操作系统下快速创建HTTP文件交付和共享系统的网页程序。
+Novel Dispatch (NDSP) 是一款适用于 Windows 操作系统下快速创建HTTP文件交付和共享系统的网页程序。
 
 ![NDSP preview](https://thumbs2.imgbox.com/6c/47/tVkQACQj_t.png)
 
@@ -46,7 +46,7 @@ Novel Dispatch 是一款适用于 Windows 操作系统下快速创建HTTP文件�
 
 - Windows 10 及以上操作系统。
 
-- 配有 ASP.NET 4.5 的 IIS 10.0 及以上版本.
+- 带有 ASP.NET 4.5 的 IIS 10.0 及以上版本。
 
 
 # Installation / 安装说明
