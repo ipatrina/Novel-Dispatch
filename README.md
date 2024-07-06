@@ -9,7 +9,7 @@ Novel Dispatch (NDSP) 是一款适用于 Windows 操作系统下快速创建HTTP
 
 # Software features / 软件功能
 
-- Map multiple local directories to web shared buckets.
+- Map multiple local directories to web-shared buckets.
 
 - User group-based access permission control.
 
