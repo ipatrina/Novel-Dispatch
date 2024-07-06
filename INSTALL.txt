@@ -1,0 +1,29 @@
+Novel Dispatch (NDSP) minimalism deployment instructions
+
+We understand that it might be difficult to get started with a brand new server application, 
+so please follow the essential steps below if you wish to make the application usable in the shortest time.
+
+1. Enable the Internet Information Services (IIS) feature in your Windows operating system.
+Be sure to enable ASP.NET (Version 4.5) features in the process.
+
+2. Place "default.aspx" in the "C:\inetpub\wwwroot" directory and delete other default files in this directory.
+
+3. Create a directory "C:\ProgramData\Novel Dispatch" and place "config.txt" and "push.html" into this directory.
+
+4. Use Notepad to edit the newly created "config.txt" and replace "D:\" and "E:\" 
+with different paths that eventually exist on the server, for sharing with the users on the network.
+
+Your application should now work by accessing "http://127.0.0.1", and the default login is "admin/admin".
+
+Please note that:
+
++ NDSP permission control is independent of the Windows operating system.
+For all shared directories, you need to grant access permissions to the "IIS_IUSRS" user group 
+on the Windows operating system side if there is no permission by default.
+
+++ NDSP uses the form of user groups for permission control. It is not intended to have too many user groups.
+If you need an independent user management system, 
+you should create a third-party application with the access to the NDSP API.
+
++++ NDSP does not have a built-in file upload client. But we have provided a demo client page "push.html", 
+which also can be used in production environments, for user references.

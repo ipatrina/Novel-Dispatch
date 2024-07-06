@@ -1,0 +1,339 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Novel Dispatch</title>
+<style>
+	body {
+		position: relative;
+		margin: 0 auto;
+		padding: 30px;
+		width: 800px;
+		font-family: Microsoft YaHei, sans-serif;
+		background: url(Background.jpg) no-repeat center center fixed;
+		background-size: cover;
+	}
+	
+	a {
+		text-decoration: none;
+		word-break: break-all;
+	}
+	
+	p {
+		margin: 5px;
+	}
+</style>
+</head>
+
+<body>
+	<br>
+	<div style="background: linear-gradient(to right, rgba(255, 128, 200, 0.9), rgba(0, 200, 200, 0.9)); text-align: center; word-break: break-all; margin: 10px; margin-left: 20%; margin-right: 20%; padding: 10px;"><a style="color: #FFFFFF; font-size: 24px; font-weight: bold;" href="">Novel Dispatch</a></div>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<table id="upload" width="100%">
+		<tbody>
+			<tr id="selector">
+				<td style="border: dodgerblue solid 2px; text-align: center;">
+					<div>
+						<br>
+						<br>
+						<br>
+						<a style="cursor: pointer;" onclick="selectFile()">
+							<div id="select-file" style="background-color: dodgerblue; color: white; padding: 10px; font-size: 20px; margin-left: 250px; margin-right: 250px;">Select File</div>
+						</a>
+						<br>
+						<br>
+						<br>
+					</div>	
+				</td>
+			</tr>
+			
+			<tr id="progress" style="display: none;">
+				<td style="border: royalblue solid 2px; color: purple;">
+					<table width="100%">
+						<tbody>
+							<tr>
+								<td width="10%">
+									<div style="padding-left: 10px; padding-top: 10px;">
+										<p id="p-name">File:</p>
+										<p id="p-size">Size:</p>
+										<p id="p-speed">Speed:</p>
+									</div>
+								</td>
+								
+								<td width="70%">
+									<div style="padding-right: 10px; padding-top: 10px;">
+										<p id="name">Unknown</p>
+										<p id="size">0 MB/0 MB</p>
+										<p id="speed">0 MB/s</p>
+									</div>
+								</td>
+								
+								<td width="20%" style="text-align: center;">
+									<p id="progresslabel" style="font-size: 48px; color: orangered;">0%</p>
+								</td>
+							</tr>
+							
+							<tr>
+								<td colspan="3">
+									<div style="padding-left: 15px; padding-right: 15px; padding-bottom: 10px;">
+										<progress id="progressbar" value="0" max="100" style="width: 100%;"></progress>
+									</div>							
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<br>
+	<br>
+	<br>
+	<br>
+
+	<input type="file" id="file-single" onchange="startUpload()" style="display: none;">
+	<input type="file" id="file-multiple" onchange="startUpload()" multiple="multiple" style="display: none;">
+
+<script>
+	var vFile;
+	var vFileName;
+	var vFileSize;
+	var vUrl;
+
+	function selectFile(event)
+	{
+		document.getElementById("file-single").click();
+	}
+
+    function startUpload(event)
+	{
+		document.getElementById("selector").style.display = "none";
+		document.getElementById("progress").style.display = "table-row";
+		vFile = document.getElementById("file-single").files[0];
+		vUrl = document.location.href;
+		vFileName = vFile.name;
+		vFileSize = vFile.size;
+		document.getElementById("name").innerHTML = vFile.name;
+		document.getElementById("size").innerHTML = formatBytes(vFile.size);
+		vStartTime = time();
+		controller(-1, -1);
+    }
+	
+	var maxThreads = 4;
+	var threads = 0;
+	var pause = false;
+	var errorCount = 0;
+	var errorCode = 0;
+	function controller(cRangeStart, cRangeEnd)
+	{
+		if (cRangeStart >= 0 || cRangeEnd >= 0)
+		{
+			errorCount = 0;
+			reportProgress(cRangeStart, cRangeEnd);
+			postData(vUrl, vFile, cRangeStart, cRangeEnd);
+		} else {
+			while (threads < maxThreads)
+			{
+				threads += 1;
+				postData(vUrl, vFile, -1, -1);
+			}
+		}
+	}
+	
+	function postData(pUrl, pFile, pRangeStart, pRangeEnd)
+	{
+		try 
+		{
+			var pRange = pRangeStart + "-" + pRangeEnd;
+			if (pRangeStart < 0 || pRangeEnd < 0) {
+				pRange = "*";
+			}
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.open("POST", pUrl, true);
+			xmlhttp.timeout = 100000;
+			xmlhttp.setRequestHeader("Content-Disposition", "attachment; filename=" + encodeURI(pFile.name).replace(/\+/g, "%2B"));
+			xmlhttp.setRequestHeader("Content-Range", "bytes " + pRange + "/" + pFile.size);
+			xmlhttp.setRequestHeader("Content-Type", "application/octet-stream");
+			xmlhttp.onreadystatechange = function() {
+				try
+				{
+					if (xmlhttp.readyState == 4) {
+						var rRange = xmlhttp.getResponseHeader("Range");
+						if (rRange) {
+							var rRangeStart = rRange.split("=")[1].split("-")[0];
+							var rRangeEnd = rRange.split("=")[1].split("-")[1];
+							controller(rRangeStart, rRangeEnd);
+						} else {
+							if (xmlhttp.status == 201) {
+								postComplete();
+							} else if (xmlhttp.status == 409) {
+								errorCode = 409;
+								postExit();
+							} else if (xmlhttp.status >= 400) {
+								postError();
+							} else {
+								postExit();
+							}
+						}
+					}
+				} catch (err) {
+					postError();
+				}
+			};
+			xmlhttp.ontimeout = function() {
+				postError();
+			};
+			if (pRangeEnd - pRangeStart <= 0)
+			{			
+				xmlhttp.send();
+			} else {			
+				var blob = blobSlice(pFile, pRangeStart, Number(pRangeEnd) + 1);
+				xmlhttp.send(blob);
+			}
+		} catch (err) {
+			postError();
+		}
+	}
+	  
+	function postError()
+	{
+		errorCount += 1;
+		setTimeout("postExit()", 5000); 
+	}
+
+	function postExit()
+	{
+		threads -= 1;
+		if (vPostComplete == 0 && (errorCount >= 50 || errorCode > 0)) {
+			var errorMessage = " (" + lRequestTimeout + ")";
+			if (errorCode == 409) { errorMessage = " (" + lFileExist + ")"; }
+			document.getElementById("p-speed").innerHTML = lStatus;
+			document.getElementById("speed").innerHTML = lUploadFailed + errorMessage;
+			document.getElementById("progresslabel").innerHTML = "ERR";
+			document.title = lError + " - " + vFileName;
+			errorCode = 0;
+		}
+		else
+		{
+			controller(-1, -1);
+		}
+	}
+	
+	var vPostComplete = 0;
+	function postComplete()
+	{
+		errorCode = 0;
+		vPostComplete = 1;
+		threads = 100;	
+		document.getElementById("size").innerHTML = formatBytes(parseFloat(vFileSize)) + "/" + formatBytes(parseFloat(vFileSize));
+		document.getElementById("p-speed").innerHTML = lStatus;
+		document.getElementById("speed").innerHTML = lUploadSuccess;
+		document.getElementById("progressbar").value = 100;
+		document.getElementById("progresslabel").innerHTML = "100%";
+		document.title = "100% - " + vFileName;
+	}
+	
+	var vProgressSize = 0;
+	var vProgressTime = 0;
+	var vStartSize = -1;
+	var vStartTime = 0;
+	function reportProgress(uRangeStart, uRangeEnd)
+	{
+		if (time() > parseFloat(vProgressTime)) {
+			if (parseFloat(uRangeStart) >= parseFloat(vProgressSize)) {		
+				var blockSize = parseFloat(uRangeEnd) - parseFloat(uRangeStart) + 1;
+				if (parseFloat(vStartSize) < 0) {
+					vStartSize = uRangeStart;
+				}
+				var progressSize = parseFloat(uRangeStart) - blockSize;
+				var averageSpeed = Math.floor(progressSize - vStartSize) / (time() - parseFloat(vStartTime));
+				document.getElementById("size").innerHTML = formatBytes(progressSize) + "/" + formatBytes(parseFloat(vFileSize));
+				document.getElementById("speed").innerHTML = formatBytes(averageSpeed) + "/s&nbsp;&nbsp;(" + formatSeconds(Math.floor((parseFloat(vFileSize) - progressSize) / averageSpeed)) + ")";
+				document.getElementById("progressbar").value = Math.floor(parseFloat(uRangeStart) / parseFloat(vFileSize) * 100);
+				document.getElementById("progresslabel").innerHTML = document.getElementById("progressbar").value + "%";
+				document.title = document.getElementById("progressbar").value + "% - " + vFileName;
+				vProgressSize = uRangeStart;
+			}
+			vProgressTime = time();
+		}		
+	}
+	
+	var lError = "Error";
+	var lFileExist = "File Exists";
+	var lRequestTimeout = "Request Timeout";
+	var lStatus = "Status: ";
+	var lUploadFailed = "Upload Failed";
+	var lUploadSuccess = "Upload Success";
+	function setLanguage()
+	{
+		var jsSrc = (navigator.language || navigator.browserLanguage).toLowerCase();
+		if (jsSrc.indexOf('zh') != -1)
+		{
+			document.getElementById("select-file").innerHTML = "选择文件";
+			document.getElementById("p-name").innerHTML = "文件:";
+			document.getElementById("p-size").innerHTML = "大小:";
+			document.getElementById("p-speed").innerHTML = "速率:";
+			lError = "错误";
+			lFileExist = "文件已存在";
+			lRequestTimeout = "请求超时";
+			lStatus = "状态: ";
+			lUploadFailed = "上传失败";
+			lUploadSuccess = "上传完成";
+		}
+	}
+
+	function blobSlice(blob, sliceStart, sliceEnd) {
+		if (blob.slice) {
+			return blob.slice(sliceStart, sliceEnd);
+		} else if (blob.webkitSlice) {
+            return blob.webkitSlice(sliceStart, sliceEnd);
+		} else if (blob.mozSlice) {
+            return blob.mozSlice(sliceStart, sliceEnd);
+		} else {
+            return null;
+		}
+	}
+	
+	function formatBytes(bytes, decimals = 2) {
+		if (bytes === 0 || parseFloat(bytes) < 0) return '0 B';
+		const k = 1024;
+ 		const dm = decimals < 0 ? 0 : decimals;
+		const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+		const i = Math.floor(Math.log(bytes) / Math.log(k));
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+	}
+	
+	function formatSeconds(seconds) {
+		if (parseFloat(seconds) <= 0)
+		{
+			return "Infinite";
+		}
+		var hours = Math.floor(seconds / 3600);
+		var minutes = Math.floor((seconds - (hours * 3600)) / 60);
+		var seconds = seconds - (hours * 3600) - (minutes * 60);
+		var time = "";
+		if (hours != 0) {
+ 			time = hours + "h ";
+		}
+		if (minutes != 0 || time !== "") {
+			time += String(minutes) + "m ";
+		}
+		time += seconds + "s";
+		return time;
+	}
+	
+	function time() {
+		return Math.ceil(new Date().getTime() / 1000);
+	}
+	
+	setLanguage();
+</script>
+</body>
+</html>

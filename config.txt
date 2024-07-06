@@ -1,0 +1,103 @@
+﻿######## Novel Dispatch Configuration File ########
+
+#
+# ============ Storage settings ============
+#
+# Buckets
+#
+# Usage: Bucket = [Bucket name] [Root path]
+#
+# Note: <> is the escape character for spaces.
+
+Bucket = Bucket_01        D:\
+Bucket = Bucket_02        E:\
+
+#
+# ============ Account settings ============
+#
+# Groups
+#
+# Usage: Group = [Group name] [Group secret] [Permissions r/w/x] [Buckets] [Timeout] [Bind-IP]
+#
+# Note: Use semicolons to separate accessible bucket names, or use dash for all buckets.
+# Note: R indicates download permission, W indicates upload permission, X indicates delete and control permissions.
+# Note: Valid duration is in hours.
+# Note: Use dash for no timeout or no IP address binding.
+
+Group = admin    admin         rwx    - - -
+Group = users      password    rw     - 24 -
+
+# Group name used for public access
+Anonymous-Group = None
+
+# The global API secret
+API-Key = default-api-key
+
+#
+# ============ System settings ============
+#
+
+# Use encrypted tokens
+Token-Enable = False
+
+# Token alias
+Token-General-Alias = token
+Token-Request-Alias = cKey
+Token-Data-Alias = vkey
+
+# Default upload block size in bytes
+Block-Size = 1048576
+
+# External page to perform write operation
+Page-Write = C:\ProgramData\Novel Dispatch\push.html
+
+# External page displayed to unauthorized users
+Page-Login = 
+
+# Custom script executed by the front-end browser
+Custom-JavaScript = 
+
+# File path to save logs
+Log-File = 
+
+# The global system secret
+Private-Key = default-private-key
+
+#
+# ============ Display settings ============
+#
+
+# Headings of the website
+Main-Title = Novel Dispatch
+Sub-Title = 
+Copyright-Information = © 2022 Novel Dispatch
+
+# Background style of the website
+Background-Image = Background.jpg
+
+# Color scheme
+MainTitle-Background-Color = linear-gradient(to right, rgba(254, 172, 94, 0.9), rgba(199, 121, 208, 0.9), rgba(75, 192, 200, 0.9))
+MainTitle-Text-Color = #FFFFFF
+SubTitle-Background-Color = linear-gradient(to top, rgba(87, 200, 255, 0.5), rgba(255, 255, 255, 0.5))
+SubTitle-Text-Color = #00000F
+Bucket-Background-Color = linear-gradient(to top, rgba(36, 57, 73, 0.9) 0%, rgba(81, 127, 164, 0.9) 100%)
+Bucket-Text-Color = #FFFFFF
+Item-Background-Color-Odd = rgba(50, 200, 255, 0.5)
+Item-Text-Color-Odd = #000066
+Item-Background-Color-Even = rgba(50, 220, 255, 0.5)
+Item-Text-Color-Even = #000066
+Delete-Background-Color = rgba(255, 0, 0, 0.5)
+Delete-Text-Color = #FFFFFF
+Copyright-Background-Color = linear-gradient(to top, rgba(211, 149, 155, 0.5) 0%, rgba(191, 230, 186, 0.5) 100%)
+Copyright-Text-Color = #FFFFF0
+
+# List files in the bucket on the homepage
+Show-Files = True
+
+# Excluded file or directory names
+Exclude = Thumbs.db
+Exclude = desktop.ini
+Exclude = LOST.DIR
+Exclude = $RECYCLE.BIN
+Exclude = System Volume Information
+Exclude = *.tmp
