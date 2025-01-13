@@ -16,8 +16,8 @@
 <Script runat=server>
 
     // Novel Dispatch
-    // Version: 7.1.1
-    // Date: 2022.11
+    // Version: 7.1.2
+    // Date: 2025.01
 
     // Configuration file
     string I_Config = @"C:\ProgramData\Novel Dispatch\config.txt";
@@ -441,7 +441,7 @@
                                         }
                                         if (X_Permission.Contains("x"))
                                         {
-                                            P_HTML_Content += ("<td style=\"background: " + GetParameter("Delete-Background-Color") + "; text-align: center; width: 10%;\"><a style=\"color: " + GetParameter("Delete-Text-Color") + "; cursor: pointer;\" onclick=\"deleteData('" + L_Delete_File + "\\r\\n\\r\\n" + P_File.Name + "','" + GetSignature("d=" + PathEncode(P_Bucket_Directory) + "&y=" + PathEncode(P_File.Name), GetParameter("Token-General-Alias"), true) + "')\">" + L_Delete + "</a></td>");
+                                            P_HTML_Content += ("<td style=\"background: " + GetParameter("Delete-Background-Color") + "; text-align: center; width: 10%;\"><a style=\"color: " + GetParameter("Delete-Text-Color") + "; cursor: pointer;\" onclick=\"deleteData('" + L_Delete_File + "\\r\\n\\r\\n" + P_File.Name.Replace("'", "\\'") + "','" + GetSignature("d=" + PathEncode(P_Bucket_Directory) + "&y=" + PathEncode(P_File.Name), GetParameter("Token-General-Alias"), true) + "')\">" + L_Delete + "</a></td>");
                                         }
                                         P_HTML_Content += ("</tr>");
                                     }
@@ -458,7 +458,7 @@
                                     P_HTML_Content += ("<tr><td style=\"background: " + GetItemBackgroundColor(P_Color_Even) + "; padding: 5px;\"><a style=\"color: " + GetItemTextColor(P_Color_Even) + ";\" href=\"" + GetSignature("d=" + PathEncode(P_Bucket_Directory) + "\\" + PathEncode(P_Directory.Name) + P_Parameter_Directory, GetParameter("Token-Request-Alias"), true) + "\">/" + P_Directory.Name + "</a></td><td style=\"background: " + GetItemBackgroundColor(P_Color_Even) + "; text-align: center; width: 15%;\"></td>");
                                     if (X_Permission.Contains("x"))
                                     {
-                                        P_HTML_Content += ("<td style=\"background: " + GetParameter("Delete-Background-Color") + "; text-align: center; width: 10%;\"><a style=\"color: " + GetParameter("Delete-Text-Color") + "; cursor: pointer;\" onclick=\"deleteData('" + L_Delete_Directory + "\\r\\n\\r\\n" + P_Directory.Name + "','" + GetSignature("d=" + PathEncode(P_Bucket_Directory) + "&y=" + PathEncode("/" + P_Directory.Name), GetParameter("Token-General-Alias"), true) + "')\">" + L_Delete + "</a></td>");
+                                        P_HTML_Content += ("<td style=\"background: " + GetParameter("Delete-Background-Color") + "; text-align: center; width: 10%;\"><a style=\"color: " + GetParameter("Delete-Text-Color") + "; cursor: pointer;\" onclick=\"deleteData('" + L_Delete_Directory + "\\r\\n\\r\\n" + P_Directory.Name.Replace("'", "\\'") + "','" + GetSignature("d=" + PathEncode(P_Bucket_Directory) + "&y=" + PathEncode("/" + P_Directory.Name), GetParameter("Token-General-Alias"), true) + "')\">" + L_Delete + "</a></td>");
                                     }
                                     P_HTML_Content += ("</tr>");
                                 }
